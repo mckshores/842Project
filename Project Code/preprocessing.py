@@ -97,25 +97,27 @@ def combineTopWords():
         for i in range(0, len(df)):
             word = df.iat[i,0]
             if word in posDict.keys():
-                posDict[word] = posDict[word] + 1
+                posDict[word] = posDict[word] + df.iat[i,1]
             else:
-                entry = {word: 1}
+                entry = {word: df.iat[i,1]}
                 posDict.update(entry)
-
+    print(posDict)
     for file in negFiles:
         df = pd.read_csv("NegTopWords/" + file, header=None)
         for i in range(0, len(df)):
             word = df.iat[i,0]
             if word in negDict.keys():
-                negDict[word] = negDict[word] + 1
+                negDict[word] = negDict[word] + df.iat[i,1]
             else:
-                entry = {word: 1}
+                entry = {word: df.iat[i,1]}
                 negDict.update(entry)
 
     posDict = sorted(posDict.items(), key=lambda x: x[1], reverse=True)
     with open("TopPosWords.csv", 'w') as csvfile:
         writer = csv.writer(csvfile)
         for key, value in posDict:
+            #print("Key ", key)
+            #print("Value ", value)
             writer.writerow([key, value])
 
     negDict = sorted(negDict.items(), key=lambda x: x[1], reverse=True)

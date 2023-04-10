@@ -11,9 +11,17 @@ import pandas as pd
 
 def preProcess():
 
-    #I tried doing this all at once in the comment block below but it took too long
-    #I'd recommend doing the categories one at a time then executing combineCategories()
-    preProcessCategory("FILE_NAME_HERE.json")
+    preProcessCategory("Arts_Crafts_and_Sewing.json")
+    preProcessCategory("Automotive.json")
+    preProcessCategory("Luxury_Beauty.json")
+    preProcessCategory("Movies_and_TV.json")
+    preProcessCategory("Video_Games.json")
+    preProcessCategory("Gift_Cards.json")
+    preProcessCategory("Office_Products.json")
+    preProcessCategory("Sports_and_Outdoors.json")
+    preProcessCategory("Tools_and_Home_Improvement.json")
+    preProcessCategory("Toys_and_Games.json")
+
 
 """"
     tempTime = datetime.datetime.now()

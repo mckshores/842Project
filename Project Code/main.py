@@ -1,5 +1,8 @@
 import preprocessing
-from preprocessing import preProcess
+import pos
 
 #preProcess()
-preprocessing.combineCategories()
+#preprocessing.combineCategories()
+
+pos.CRF()
+

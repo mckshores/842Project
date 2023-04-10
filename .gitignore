@@ -21,3 +21,13 @@ Project Code/Reviews/Tools_and_Home_Improvement.json
 Project Code/Reviews/Toys_and_Games.json
 Project Code/Reviews/Video_Games.json
 Reviews/Toys_and_Games.json
+*.pdf
+*.iml
+*.xml
+huggingFace/main.py
+shoresmc_pos_crf/__pycache__/poscrf.cpython-310.pyc
+huggingFace/main.py
+shoresmc_pos_crf/LSTM.py
+shoresmc_pos_crf/main.py
+shoresmc_pos_crf/poscrf.py
+huggingFace/main.py

@@ -31,3 +31,5 @@ shoresmc_pos_crf/LSTM.py
 shoresmc_pos_crf/main.py
 shoresmc_pos_crf/poscrf.py
 huggingFace/main.py
+Project Code/image_review_all.json
+Project Code/GoogleReviews.csv

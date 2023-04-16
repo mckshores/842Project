@@ -74,64 +74,6 @@ def preProcess():
     trainResult.to_csv("trainData.csv", sep=',', index=False)
 """
 
-def combineCategories():
-    testFiles = os.listdir('Test')
-    testFrames = []
-    for file in testFiles:
-        df = pd.read_csv("Test/" + file)
-        testFrames.append(df)
-    testResult = pandas.concat(testFrames)
-    testResult.to_csv("testData.csv", sep=',', index=False)
-
-    devFiles = os.listdir('Dev')
-    devFrames = []
-    for file in devFiles:
-        df = pd.read_csv("Dev/" + file)
-        devFrames.append(df)
-    devResult = pandas.concat(devFrames)
-    devResult.to_csv("devData.csv", sep=',', index=False)
-    combineTopWords()
-
-def combineTopWords():
-    posFiles = os.listdir('PosTopWords')
-    negFiles = os.listdir('NegTopWords')
-    posDict = {}
-    negDict = {}
-    for file in posFiles:
-        df = pd.read_csv("PosTopWords/" + file, header=None)
-        for i in range(0, len(df)):
-            word = df.iat[i,0]
-            if word in posDict.keys():
-                posDict[word] = posDict[word] + df.iat[i,1]
-            else:
-                entry = {word: df.iat[i,1]}
-                posDict.update(entry)
-    print(posDict)
-    for file in negFiles:
-        df = pd.read_csv("NegTopWords/" + file, header=None)
-        for i in range(0, len(df)):
-            word = df.iat[i,0]
-            if word in negDict.keys():
-                negDict[word] = negDict[word] + df.iat[i,1]
-            else:
-                entry = {word: df.iat[i,1]}
-                negDict.update(entry)
-
-    posDict = sorted(posDict.items(), key=lambda x: x[1], reverse=True)
-    with open("TopPosWords.csv", 'w') as csvfile:
-        writer = csv.writer(csvfile)
-        for key, value in posDict:
-            #print("Key ", key)
-            #print("Value ", value)
-            writer.writerow([key, value])
-
-    negDict = sorted(negDict.items(), key=lambda x: x[1], reverse=True)
-    with open("TopNegWords.csv", 'w') as csvfile:
-        writer = csv.writer(csvfile)
-        for key, value in negDict:
-            writer.writerow([key, value])
-
-
 def preProcessCategory(filename):
     testData = []
     devData = []
@@ -142,62 +84,64 @@ def preProcessCategory(filename):
 
     for line in open("Reviews/" + filename, "r"):
         data.append(json.loads(line))
-    posReviews, negReviews = populateLists(data)
+    twostar, threestar, fourstar = populateLists(data)
 
     # Take 20% off the top of each list and add to test data
-    posTestData = posReviews[:500]
-    posTrainData = posReviews[500:]
-    negTestData = negReviews[:500]
-    negTrainData = negReviews[500:]
-    testData.append(posTestData)
-    testData.append(negTestData)
+    twostarTestData = twostar[:500]
+    twostarTrainData = twostar[500:]
+    threestarTestData = threestar[:500]
+    threestarTrainData = threestar[500:]
+    fourstarTestData = fourstar[:500]
+    fourstarTrainData = fourstar[500:]
+    testData.append(twostarTestData)
+    testData.append(threestarTestData)
+    testData.append(fourstarTestData)
     # Take 10% off the top of each list and add to dev data
-    devData.append(posTrainData[:200])
-    devData.append(negTrainData[:200])
+    devData.append(twostarTrainData[:200])
+    devData.append(threestarTrainData[:200])
+    devData.append(fourstarTrainData[:200])
 
-    posTrainData = posTrainData[200:]
-    negTrainData = negTrainData[200:]
+    twostarTrainData = twostarTrainData[200:]
+    threestarTrainData = threestarTrainData[200:]
+    fourstarTrainData = fourstarTrainData[200:]
 
     # write dev data to a csv, also returning the reviews as a DataFrame
-    devName = "Dev/" + filename.split(".")[0] + "_dev.csv"
+    devName = "Neutral/Dev/" + filename.split(".")[0] + "_neutral_dev.csv"
     devDataFrame = castToDf(devData, devName)
 
     # write test data to a csv, also returning the reviews as a DataFrame
-    testName = "Test/" + filename.split(".")[0] + "_test.csv"
+    testName = "Neutral/Test/" + filename.split(".")[0] + "_neutral_test.csv"
     testDataFrame = castToDf(testData, testName)
 
-    # Search thru pos list to get top words
-    # Write words in order to csv
-    topPosWords = findTopWords(posTrainData, "PosTopWords/" + filename.split(".")[0] + "_Pos.csv")
-    # Search thru neg list to get top words
-    # Write words in order to csv
-    topNegWords = findTopWords(negTrainData, "NegTopWords/" + filename.split(".")[0] + "_Neg.csv")
-
     # Combine pos/neg training data and write to csv
-    trainData.append(posTrainData)
-    trainData.append(negTrainData)
-    trainName = "Training/" + filename.split(".")[0] + "_train.csv"
+    trainData.append(twostarTrainData)
+    trainData.append(threestarTrainData)
+    trainData.append(fourstarTrainData)
+    trainName = "Neutral/Training/" + filename.split(".")[0] + "_neutral_train.csv"
     trainDataFrame = castToDf(trainData, trainName)
 
-    return testDataFrame,devDataFrame,trainDataFrame,topPosWords, topNegWords
+    return testDataFrame,devDataFrame,trainDataFrame
 
 def populateLists(json):
-    posList = []
-    negList = []
+    twostar = []
+    threestar = []
+    fourstar = []
     i = 0
     reviewerID = 'Amazon Customer'
-    while(len(posList) < 2500 or len(negList) < 2500):
+    while(len(json) > i and (len(twostar) < 2500 or len(threestar) < 2500 or len(fourstar) < 2500)):
         review = json[i]
         keys = "reviewerName" in review.keys() and "overall" in review.keys() and "reviewText" in review.keys()
         #Check that all the keys exist and the name is not Amazon Customer
         #OPTIONAL: Add ReviewerName when appending to lists
         if keys and review["reviewerName"] != reviewerID:
-            if review["overall"] == 5.0 and len(posList) < 2500:
-                posList.append((review["reviewText"], review["overall"]))
-            elif review["overall"] == 1.0 and len(negList) < 2500:
-                negList.append((review["reviewText"], review["overall"]))
+            if review["overall"] == 2.0 and len(twostar) < 2500:
+                twostar.append((review["reviewText"], review["overall"]))
+            elif review["overall"] == 3.0 and len(threestar) < 2500:
+                threestar.append((review["reviewText"], review["overall"]))
+            elif review["overall"] == 4.0 and len(fourstar) < 2500:
+                fourstar.append((review["reviewText"], review["overall"]))
         i += 1
-    return posList, negList
+    return twostar, threestar, fourstar
 
 def castToDf(data, filename):
     reviewList = []
@@ -212,23 +156,4 @@ def castToDf(data, filename):
 
     return df
 
-#Currently this has a manual step of sifting out meaningless words.
-#Strech goal is to automate this with a POS tagger
-#We need to look at the list and talk about what kinds of words we want to keep
-def findTopWords(reviews, filename):
-    dictionary = {}
-    for r in reviews:
-        wordList = r[0].split()
-        for w in wordList:
-            if w in dictionary.keys():
-                dictionary[w] = dictionary[w] + 1
-            else:
-                entry = {w: 1}
-                dictionary.update(entry)
-    #sort dictionary most to least popular
-    dictionary = sorted(dictionary.items(), key=lambda x: x[1], reverse=True)
-    with open(filename, 'w') as csvfile:
-        writer = csv.writer(csvfile)
-        for key, value in dictionary:
-            writer.writerow([key, value])
 

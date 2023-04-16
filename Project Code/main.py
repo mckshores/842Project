@@ -1,8 +1,10 @@
+import neutralReviews
 import preprocessing
 import pos
 
 #preProcess()
 #preprocessing.combineCategories()
 
-pos.CRF()
+#pos.CRF()
+neutralReviews.preProcess()
 

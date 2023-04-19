@@ -25,9 +25,9 @@ def CRF():
 
     #Setup testing data
     test_sentences = []
-    testFiles = os.listdir('Training')
+    testFiles = os.listdir('Neutral/Training')
     for file in testFiles:
-        df = pandas.read_csv("Training/" + file)
+        df = pandas.read_csv("Neutral/Training/" + file)
         temp = df['Review'].tolist()
         for t in temp:
             test_sentences.append(t)
@@ -37,7 +37,7 @@ def CRF():
         y_pred = crf.predict(X_test)
         #Write to CSV
         df = pandas.DataFrame(data={"Word": X_test, "POS": y_pred})
-        df.head(100).to_csv("POS/" + file.split(".")[0] + "_pos.csv", sep=',', index=False)
+        df.head(100).to_csv("POS/Neutral/" + file.split(".")[0] + "_pos.csv", sep=',', index=False)
 
 def split_data(sentences):
     X,y = [], []

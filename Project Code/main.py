@@ -3,11 +3,11 @@ import preprocessing
 import pos
 import googleReviews
 
-#preProcess()
+#preprocessing.preProcess()
 #preprocessing.combineCategories()
 
-#pos.CRF()
+pos.CRF()
 #neutralReviews.preProcess()
 
-googleReviews.process()
+#googleReviews.process()
 

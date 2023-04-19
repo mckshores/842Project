@@ -128,7 +128,7 @@ def populateLists(json):
     fourstar = []
     i = 0
     reviewerID = 'Amazon Customer'
-    while(len(json) > i and (len(twostar) < 2500 or len(threestar) < 2500 or len(fourstar) < 2500)):
+    while(len(json) > i and (len(twostar) < 7500 or len(threestar) < 7500 or len(fourstar) < 7500)):
         review = json[i]
         keys = "reviewerName" in review.keys() and "overall" in review.keys() and "reviewText" in review.keys()
         #Check that all the keys exist and the name is not Amazon Customer

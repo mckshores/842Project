@@ -186,7 +186,7 @@ def populateLists(json):
     negList = []
     i = 0
     reviewerID = 'Amazon Customer'
-    while(len(posList) < 2500 or len(negList) < 2500):
+    while(len(json) > i and (len(posList) < 7500 or len(negList) < 7500)):
         review = json[i]
         keys = "reviewerName" in review.keys() and "overall" in review.keys() and "reviewText" in review.keys()
         #Check that all the keys exist and the name is not Amazon Customer
